@@ -14,6 +14,8 @@ public class DishImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
     private String referenceText;

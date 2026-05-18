@@ -20,6 +20,12 @@ public class Expenditure {
 
     private Double amount;
 
+    @ManyToOne
+    private Branches branches;
+
+    @ManyToOne
+    private Revenue revenue;
+
 
 
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,6 +16,16 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    private User user;
+
+    @OneToOne
+    private User managerUser;
+
+    @ManyToOne
+    private Branches branches;
+
+
     private Double salary;
 
     @Column(name = "availability")
@@ -23,5 +34,13 @@ public class Staff {
     private LocalDateTime joinedAt;
 
     private LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "staff")
+    private Order order;
+
+    @OneToMany(mappedBy = "staff")
+    private List<RestaurantTable>  restaurantTable;
+
+
 
 }

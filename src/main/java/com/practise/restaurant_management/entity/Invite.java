@@ -1,33 +1,31 @@
 package com.practise.restaurant_management.entity;
 
+import com.practise.restaurant_management.enums.InviteStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "restaurants")
-public class Restaurant {
+public class Invite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    private String name;
-
     @ManyToOne
-    private User owner;
+    private User user;
 
-    private LocalDateTime createdAt;
+    private UUID inviteToken;
 
-    private LocalDateTime updatedAt;
+    private InviteStatus inviteStatus;
 
-    @OneToMany(mappedBy = "restaurant")
-    private List<Branches> branches;
+    private LocalDateTime creationDate;
+
+    private LocalDateTime expirationDate;
 
 }

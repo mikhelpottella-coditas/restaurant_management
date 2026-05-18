@@ -21,9 +21,8 @@ public class Menu {
     @Column(name = "dishes_id")
     private List<Dishes> dishes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id")
-    private Branches branches;
+    @OneToOne
+    private Branches branch;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

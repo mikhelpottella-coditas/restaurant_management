@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,6 +23,11 @@ public class Revenue {
     @Column(name = "income")
     private Double income;
 
+    @ManyToOne
+    private Branches branch;
+
+    @OneToMany(mappedBy = "revenue")
+    private List<Expenditure> expenditureList;
 
 
 }

@@ -52,6 +52,18 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToOne(mappedBy = "user")
+    private Staff staff;
+
+    @OneToOne(mappedBy = "managerUser")
+    private Staff managerStaff;
+
+    @OneToOne(mappedBy = "manager")
+    private Branches branches;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Restaurant> restaurantList;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_"+role));

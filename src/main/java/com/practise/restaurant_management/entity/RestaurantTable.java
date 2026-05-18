@@ -20,6 +20,8 @@ public class RestaurantTable {
 
     private Integer tableNumber;
 
+    private Integer capacity;
+
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branches  branches;
@@ -28,7 +30,6 @@ public class RestaurantTable {
     @JoinColumn(name = "staff_id")
     private Staff staff;
 
-    private Integer capacity;
 
     private LocalDateTime createdAt;
 

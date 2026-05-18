@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,6 +17,12 @@ public class Branches {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Restaurant restaurant;
+
+    @OneToOne
+    private User manager;
 
     private String location;
 
@@ -31,5 +38,19 @@ public class Branches {
     @Enumerated(EnumType.STRING)
     private BranchType branchType;
 
+    @OneToMany(mappedBy = "branches")
+    private List<Staff>  staffList;
+
+    @OneToOne(mappedBy = "branch")
+    private Menu menu;
+
+    @OneToMany(mappedBy = "branches")
+    private List<RestaurantTable> restaurantTableList;
+
+    @OneToMany(mappedBy = "branch")
+    private List<Revenue>  revenueList;
+
+    @OneToMany(mappedBy = "branches")
+    private List<Expenditure>   expenditureList;
 
 }
