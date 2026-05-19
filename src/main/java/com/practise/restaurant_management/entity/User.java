@@ -2,8 +2,7 @@ package com.practise.restaurant_management.entity;
 
 import com.practise.restaurant_management.enums.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +15,9 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "user")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -52,11 +54,11 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Staff staff;
 
-    @OneToOne(mappedBy = "managerUser")
-    private Staff managerStaff;
+    @OneToMany(mappedBy = "managerUser")
+    private List<Staff> managerStaff;
 
     @OneToOne(mappedBy = "manager")
     private Branches branches;

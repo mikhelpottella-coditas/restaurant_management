@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,8 +18,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @Column(name = "dishes_id")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "menu")
     private List<Dishes> dishes;
 
     @OneToOne
@@ -26,5 +26,11 @@ public class Menu {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public void addDishes(Dishes dish) {
+        if(dishes == null) dishes = new ArrayList<>();
+        dishes.add(dish);
+        dish.setMenu(this);
+    }
 
 }

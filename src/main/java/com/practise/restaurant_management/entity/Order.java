@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authorization.EnableMultiF
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "orders")
@@ -45,9 +46,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
+    public void addOrderItem(OrderItem orderItem){
+        if(orderItems==null) orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
 
 
 }

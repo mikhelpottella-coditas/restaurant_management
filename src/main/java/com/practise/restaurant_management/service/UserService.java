@@ -2,6 +2,7 @@ package com.practise.restaurant_management.service;
 
 import com.practise.restaurant_management.dto.request.LoginDto;
 import com.practise.restaurant_management.entity.User;
+import com.practise.restaurant_management.enums.Role;
 import com.practise.restaurant_management.exception.CustomException;
 import com.practise.restaurant_management.repo.UserRepo;
 import com.practise.restaurant_management.security.JwtUtil;
@@ -14,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,4 +57,23 @@ public class UserService implements UserDetailsService {
         log.info("User logged in successfully");
         return jwtUtil.generateToken(user.getUsername(), user.getEmail());
     }
+
+    public String updateProfile( User user) {
+        userRepo.save(user);
+        return "user updated successfully";
+    }
+
+    public List<User> getAllUsersRoleManager(Role role) {
+        return userRepo.findByRole(role);
+    }
+
+    public void save(User manager) {
+        userRepo.save(manager);
+    }
+
+    public void delete(User staffUser) {
+        userRepo.delete(staffUser);
+    }
+
+
 }

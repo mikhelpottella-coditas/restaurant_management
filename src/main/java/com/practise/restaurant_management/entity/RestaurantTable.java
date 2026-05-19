@@ -35,7 +35,7 @@ public class RestaurantTable {
 
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "restaurantTable",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "restaurantTable",fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     private List<Order> order;
 
 }

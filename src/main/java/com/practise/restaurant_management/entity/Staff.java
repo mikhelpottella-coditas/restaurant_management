@@ -1,8 +1,7 @@
 package com.practise.restaurant_management.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,19 +9,22 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Staff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User managerUser;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Branches branches;
 
 
@@ -35,10 +37,10 @@ public class Staff {
 
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "staff")
-    private Order order;
+    @OneToMany(mappedBy = "staff",orphanRemoval = true,cascade = CascadeType.MERGE)
+    private List<Order> order;
 
-    @OneToMany(mappedBy = "staff")
+    @OneToMany(mappedBy = "staff",orphanRemoval = true,cascade = CascadeType.MERGE)
     private List<RestaurantTable>  restaurantTable;
 
 

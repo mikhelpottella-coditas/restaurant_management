@@ -1,5 +1,6 @@
 package com.practise.restaurant_management.entity;
 
+import com.practise.restaurant_management.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class OrderItem {
 
     private Double totalPrice;
 
+    private OrderStatus orderStatus;
 
     @OneToOne
     @JoinColumn(name = "dishes_id")

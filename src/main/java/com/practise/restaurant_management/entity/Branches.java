@@ -53,4 +53,7 @@ public class Branches {
     @OneToMany(mappedBy = "branches")
     private List<Expenditure>   expenditureList;
 
+
+
+
 }
