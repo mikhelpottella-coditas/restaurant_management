@@ -23,7 +23,7 @@ public class OrderItem {
 
     private OrderStatus orderStatus;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "dishes_id")
     private Dishes dishes;
 

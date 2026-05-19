@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -69,5 +70,24 @@ public class RestaurantService {
         List<BranchResponseDto> branchResponseDtoList = restaurant.getBranches().stream().map(branch -> new BranchResponseDto(branch.getId(), restaurant.getName(), branch.getManager().getFirstName(), branch.getLocation(), branch.getContactNumber(), branch.getCreatedAt(), branch.getUpdatedAt(), branch.getCuisine(), branch.getBranchType(), null, null)).toList();
 
         return new RestaurantResponseDto(restaurant.getId(), restaurant.getName(),ownerProfileDto,restaurant.getCreatedAt(),restaurant.getUpdatedAt(), branchResponseDtoList);
+    }
+
+
+    public List<Restaurant> getAll(){
+        return restaurantRepo.findAll();
+    }
+
+    public List<RestaurantResponseDto> getAllRestaurants() {
+
+        List<Restaurant> restaurantList= getAll();
+        List<RestaurantResponseDto> restaurantResponseDtoList = new ArrayList<>();
+        restaurantList.forEach(restaurant -> {
+            OwnerProfileDto ownerProfileDto = ownerService.getOwnerProfile(restaurant.getOwner().getId());
+            restaurantResponseDtoList.add( new RestaurantResponseDto(restaurant.getId(), restaurant.getName(),ownerProfileDto , restaurant.getCreatedAt(), restaurant.getUpdatedAt(), null));
+        });
+
+        log.info("restaurant found : {}", restaurantResponseDtoList);
+        return restaurantResponseDtoList;
+
     }
 }

@@ -26,8 +26,7 @@ public class Revenue {
     @ManyToOne
     private Branches branch;
 
-    @OneToMany(mappedBy = "revenue")
-    private List<Expenditure> expenditureList;
-
+    @Column(name = "expenditure_amount")
+    private Double expenditureAmount;
 
 }

@@ -2,7 +2,6 @@ package com.practise.restaurant_management.service;
 
 import com.practise.restaurant_management.dto.request.OrderItemRequestDto;
 import com.practise.restaurant_management.dto.request.OrderRequestDto;
-import com.practise.restaurant_management.dto.response.DishResponseDto;
 import com.practise.restaurant_management.dto.response.OrderItemResponseDto;
 import com.practise.restaurant_management.dto.response.OrderResponseDto;
 import com.practise.restaurant_management.entity.Branches;
@@ -17,9 +16,17 @@ import com.practise.restaurant_management.repo.OrderItemRepo;
 import com.practise.restaurant_management.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +38,7 @@ public class OrderService {
 
     private final OrderRepo orderRepo;
     private final OrderItemRepo orderItemRepo;
+    private final RestaurantTableService tableService;
     private final StaffService staffService;
     private final BranchService branchService;
     private final DishService dishService;
@@ -70,6 +78,7 @@ public class OrderService {
         Order order = new Order();
         order.setOrderedAt(LocalDateTime.now());
         order.setStaff(staff);
+        order.setRestaurantTable(tableService.getById(orderRequestDto.restaurantTableId()));
         order.setCustomerName(orderRequestDto.customerName());
         order.setCustomerNumber(orderRequestDto.customerNumber());
         orderItemList.forEach(order::addOrderItem);
@@ -140,5 +149,48 @@ public class OrderService {
         log.info("getAllOrderItems for branch which or pending to serve{}", branchId);
         return orderItemResponseDtoList;
 
+    }
+
+    public String generateBill(Long orderId){
+
+        Order order = getById(orderId);
+
+
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage(page);
+
+        PDPageContentStream contentStream = null;
+        try {
+            contentStream = new PDPageContentStream(document, page);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER), 12);
+            contentStream.setStrokingColor(Color.RED);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(25, 500);
+            contentStream.showText("Date               :            "+order.getOrderedAt().toString());
+            contentStream.showText("Restaurant Name    : "+order.getStaff().getBranches().getRestaurant().getName().toString());
+
+            contentStream.showText("Customer name      :   "+ order.getCustomerName());
+            contentStream.showText("Customer number    : "+ order.getCustomerNumber());
+            contentStream.showText("Table number       : "+order.getRestaurantTable().getTableNumber().toString());
+
+            for (OrderItem orderItem : order.getOrderItems()){
+                contentStream.showText(orderItem.getDishes().getName()+"                  "+orderItem.getQuantity()+"       "+orderItem.getTotalPrice());
+            }
+            contentStream.showText("\n \n Tax amount         : "+order.getTaxableAmount().toString());
+            contentStream.showText("Discount amount          : "+order.getDiscountAmount().toString());
+            contentStream.showText("\n \n final price        : "+order.getFinalPrice().toString());
+            contentStream.endText();
+            contentStream.close();
+
+            document.save("C:/Users/Coditas-Admin/Downloads/pdfBoxHelloWorld"+ LocalDate.now().toString()+".pdf");
+            document.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+        return "get pdf";
     }
 }

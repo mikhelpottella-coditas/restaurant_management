@@ -98,25 +98,22 @@ public class DishService {
         if(createDishDto.cuisine()!=null) dishes.setCuisine(createDishDto.cuisine());
 
         dishRepo.save(dishes);
-
         log.info("updated the dish with name : {}",dishes.getName());
-
         return "updated dish with the name : "+dishes.getName();
     }
 
     public String deleteDish(Long id) {
         Dishes dishes = getById(id);
-
         dishRepo.delete(dishes);
         log.info("dish deleted with the id : {}",id);
-
         return "dish deleted with the id"+id;
-
     }
 
     public String updateDishStatus(Long dishId, Boolean status) {
         Dishes dishes = getById(dishId);
         dishes.setIsAvailable(status);
         dishRepo.save(dishes);
+        log.info("updated the dish with status : {}",dishes.getIsAvailable());
+        return "updated dish with status : "+dishes.getIsAvailable();
     }
 }

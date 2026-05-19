@@ -23,9 +23,5 @@ public class Expenditure {
     @ManyToOne
     private Branches branches;
 
-    @ManyToOne
-    private Revenue revenue;
-
-
 
 }

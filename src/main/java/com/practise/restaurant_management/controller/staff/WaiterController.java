@@ -56,4 +56,12 @@ public class WaiterController {
 
 
 
+    @GetMapping("/pdf/{orderId}")
+    public ResponseEntity<String> getPdf(@PathVariable Long orderId){
+        log.info("get Pdf for the order with id : {}",orderId);
+        String response = orderService.generateBill(orderId);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
+

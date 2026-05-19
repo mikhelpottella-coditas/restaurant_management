@@ -1,11 +1,14 @@
 package com.practise.restaurant_management.service;
 
 import com.practise.restaurant_management.dto.request.LoginDto;
+import com.practise.restaurant_management.entity.RefreshToken;
 import com.practise.restaurant_management.entity.User;
 import com.practise.restaurant_management.enums.Role;
 import com.practise.restaurant_management.exception.CustomException;
+import com.practise.restaurant_management.repo.RefreshTokenRepo;
 import com.practise.restaurant_management.repo.UserRepo;
 import com.practise.restaurant_management.security.JwtUtil;
+import com.practise.restaurant_management.security.RefreshTokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -26,7 +30,8 @@ public class UserService implements UserDetailsService {
     private final UserRepo userRepo;
     private  final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-
+    private final RefreshTokenRepo refreshTokenRepo;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -54,8 +59,10 @@ public class UserService implements UserDetailsService {
             throw  new CustomException(HttpStatus.NOT_FOUND, "Invalid credentials");
         }
 
+        String access = jwtUtil.generateToken(user.getUsername(),user.getEmail());
+        String refresh = refreshTokenService.createRefreshToken(user);
         log.info("User logged in successfully");
-        return jwtUtil.generateToken(user.getUsername(), user.getEmail());
+        return "access : "+access+"\n refresh : "+refresh;
     }
 
     public String updateProfile( User user) {
@@ -76,4 +83,14 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public String refresh(String refreshToken) {
+        RefreshToken token = refreshTokenRepo.findById(refreshToken)
+                .orElseThrow();
+
+        if (token.getExpiryDate().isBefore(Instant.now())) {
+            throw new RuntimeException("Expired");
+        }
+        String newAccess = jwtUtil.generateToken(token.getUser().getUsername(),token.getUser().getEmail());
+        return "access token: "+newAccess;
+    }
 }

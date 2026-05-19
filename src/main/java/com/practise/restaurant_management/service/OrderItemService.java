@@ -24,8 +24,10 @@ public class OrderItemService {
     public String updateDishStatus(Long orderItemId, OrderStatus status) {
 
         OrderItem orderItem = getById(orderItemId);
-
         orderItem.setOrderStatus(status);
+        orderItemRepo.save(orderItem);
+        log.info("updated the status of the order item id : " + orderItem.getId());
+        return "status updated successfully";
 
     }
 }

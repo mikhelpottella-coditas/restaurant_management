@@ -49,8 +49,8 @@ public class Dishes {
     @OneToMany(mappedBy = "dishes",cascade = CascadeType.ALL)
     private List<DishImage> dishImageList;
 
-    @OneToOne(mappedBy = "dishes")
-    private OrderItem orderItem;
+    @OneToMany(mappedBy = "dishes")
+    private List<OrderItem> orderItem;
 
 
     public void addDishImage(DishImage dishImage){
