@@ -40,6 +40,7 @@ public class BranchService {
         branch.setCreatedAt(LocalDateTime.now());
         branch.setUpdatedAt(LocalDateTime.now());
 
+        log.info("adding a new branch to teh restaurant : {}", branchRequestDto.restaurantId());
         branchRepo.save(branch);
         return "new branch added";
 
@@ -51,10 +52,12 @@ public class BranchService {
         Pageable pageable = PageRequest.of(page, size, sort);
         List<Branches> branches = branchRepo.findAllByRestaurantId(restaurantId,pageable).getContent();
 
+        log.info("getting branches for restaurant : {}", restaurantId);
         return branches.stream().map(branch -> new BranchResponseDto(branch.getId(), branch.getRestaurant().getName(),null, branch.getLocation(), branch.getContactNumber(), branch.getCreatedAt(), branch.getUpdatedAt(), branch.getCuisine(), branch.getBranchType(), null, null)).toList();
     }
 
     public Branches getById(Long branchId) {
+        log.info("getting branch id : {}", branchId);
         return branchRepo.findById(branchId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "branch not found"));
     }
 
@@ -66,6 +69,7 @@ public class BranchService {
         Branches branch = branchRepo.findById(branchId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "branch not found"));
         log.info("branch found with the given id: {}", branchId);
         String managerName = branch.getManager() != null ? branch.getManager().getFirstName() : null;
+        log.info("manager found with the given name: {}", managerName);
         return new BranchResponseDto(branch.getId(), branch.getRestaurant().getName(),managerName, branch.getLocation(), branch.getContactNumber(), branch.getCreatedAt(), branch.getUpdatedAt(), branch.getCuisine(), branch.getBranchType(), null, null);
     }
 

@@ -51,4 +51,20 @@ class OrderServiceTest {
     @Test
     void getById() {
     }
+
+    @Test
+    void testGetAllOrder() {
+    }
+
+    @Test
+    void testCreateOrder() {
+    }
+
+    @Test
+    void testGetById() {
+    }
+
+    @Test
+    void addOrderItem() {
+    }
 }

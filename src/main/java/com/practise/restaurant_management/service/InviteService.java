@@ -46,6 +46,7 @@ public class InviteService {
         mailMessage.setText(request.message()+"\n**this link will expire in next 48hrs \n invitation link : https://santa-disobey-washtub.ngrok-free.dev"+path+invite.getInviteToken());
 
         javaMailSender.send(mailMessage);
+        log.info("Invitation to on the application as a owner");
         return "invitation sent successfully";
 
 
@@ -53,11 +54,13 @@ public class InviteService {
 
     public String inviteOwner(@Valid SendOwnerInviteRequestDto request) {
         inviteUser(request, "/auth/register/owner/");
-        return "invitation sent successful";
+        log.info("invite owner successfully");
+        return  inviteUser(request, "/auth/register/owner/");
     }
 
     public Boolean validate(String email, UUID token) {
         Invite invite = inviteRepo.findByInviteToken(token);
+        log.info("validating the user token ");
         return email.equals(invite.getInvitationTo());
     }
 

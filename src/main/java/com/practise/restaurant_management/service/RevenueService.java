@@ -83,6 +83,7 @@ public class RevenueService {
 
         List<ViewReportResponseDto> viewReportResponseDtos = response.stream().map(r-> new ViewReportResponseDto(r.getBranch().getId(), r.getIncome(), r.getExpenditureAmount(), r.getTotalOrders(), r.getProfit(), r.getProfit())).toList();
 
+        log.info("send the reports of the branch of a particular date");
         return viewReportResponseDtos;
     }
 }

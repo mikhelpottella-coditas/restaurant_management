@@ -79,6 +79,7 @@ public class DishService {
 
 
     public Dishes getById(Long id){
+        log.info("getting a dish by the id : {}",id);
         return dishRepo.findById(id).orElseThrow(()-> new CustomException(HttpStatus.NOT_FOUND, "dish not found with the given id"));
     }
 

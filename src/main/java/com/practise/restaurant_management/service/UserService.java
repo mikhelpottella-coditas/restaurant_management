@@ -80,10 +80,12 @@ public class UserService implements UserDetailsService {
     }
 
     public void save(User manager) {
+        log.info("saving the user with the id : {}",manager.getId());
         userRepo.save(manager);
     }
 
     public void delete(User staffUser) {
+        log.info("deleting the user with the id : {}",staffUser.getId());
         userRepo.delete(staffUser);
     }
 
@@ -96,6 +98,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Expired");
         }
         String newAccess = jwtUtil.generateToken(token.getUser().getUsername(),token.getUser().getEmail());
+        log.info("refreshing the token with the id : {}",newAccess);
         return "access token: "+newAccess;
     }
 
@@ -119,7 +122,7 @@ public class UserService implements UserDetailsService {
 
         userRepo.save(user);
 
-        log.info("registration successfully");
+        log.info("registration successfully for the owner");
         return "registration successfully completed";
 
     }
@@ -143,7 +146,7 @@ public class UserService implements UserDetailsService {
 
         userRepo.save(user);
 
-        log.info("registration successfully");
+        log.info("registration successfully for the manager");
         return "registration successfully completed";
 
     }

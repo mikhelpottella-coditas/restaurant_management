@@ -45,6 +45,7 @@ public class ManagerService {
         if (managerProfileDto.phoneNumber()!=null) user.setPhoneNumber(managerProfileDto.phoneNumber());
         user.setUpdatedAt(LocalDateTime.now());
 
+        log.info("updating the profile of the manager wiht the id: {}", id);
         return userService.updateProfile(user);
     }
 

@@ -3,12 +3,14 @@ package com.practise.restaurant_management.service;
 import com.practise.restaurant_management.dto.response.OwnerProfileDto;
 import com.practise.restaurant_management.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OwnerService {
 
     private final UserService userService;
@@ -16,6 +18,7 @@ public class OwnerService {
 
     public OwnerProfileDto getOwnerProfile(Long id) {
         User  user = userService.findById(id);
+        log.info("Get owner profile with the id : {}",id);
         return new OwnerProfileDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber(), user.getRole(), user.getImage(), user.getCreatedAt(), user.getUpdatedAt());
     }
 
@@ -31,6 +34,7 @@ public class OwnerService {
         if(ownerProfileDto.image() != null) owner.setImage(ownerProfileDto.image());
         if(ownerProfileDto.updatedAt() != null) owner.setUpdatedAt(LocalDateTime.now());
 
+        log.info("Update owner profile with the id : {}",id);
         return userService.updateProfile(owner);
 
     }

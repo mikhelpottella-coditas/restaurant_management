@@ -208,8 +208,7 @@ public class OrderService {
             throw new RuntimeException(e);
         }
 
-
-
+        log.info("generating the bill in the pdf form successfully");
         return "get pdf";
     }
 }
