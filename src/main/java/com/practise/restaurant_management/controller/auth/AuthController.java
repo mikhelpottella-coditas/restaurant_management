@@ -21,12 +21,13 @@ public class AuthController {
     private final UserService userService;
 
     @Operation(
-            summary = "this is for the owner to register him sle"
+            summary = "this is for the owner to register him self using the mail invitation that he got"
     )
     @PostMapping("/register/owner/{token}")
     public String registerOwner(@PathVariable UUID token,@Valid @RequestBody RegisterRequestDto user){
         return userService.registerOwner(token,user);
     }
+
 
     @PostMapping("/register/manager/{token}")
     public String registerManger(@PathVariable UUID token,@Valid @RequestBody RegisterRequestDto user){

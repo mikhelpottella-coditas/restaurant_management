@@ -13,8 +13,8 @@ import java.util.List;
 public interface RevenueRepo extends JpaRepository<Revenue,Long> {
 
     @Query("""
-        SELECT b FROM Revenue b WHERE b.branchId = :branchId AND
-        b.reportDate BETWEEN :from AND :to
+        SELECT b FROM Revenue b WHERE b.branch.id = :branchId AND
+        b.date BETWEEN :from AND :to
     """)
     List<Revenue> extractDetailsBtw(@NotNull Long aLong, @NotNull LocalDate from, @NotNull LocalDate localDate);
 }
