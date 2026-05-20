@@ -9,6 +9,9 @@ import com.practise.restaurant_management.exception.CustomException;
 import com.practise.restaurant_management.repo.BranchRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -42,14 +45,21 @@ public class BranchService {
 
     }
 
-    public List<BranchResponseDto> getAllBranches(Long restaurantId) {
-        List<Branches> branches = branchRepo.findAllByRestaurantId(restaurantId);
+    public List<BranchResponseDto> getAllBranches(Long restaurantId, Integer page, Integer size, String sortBy, Boolean ascending) {
+
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<Branches> branches = branchRepo.findAllByRestaurantId(restaurantId,pageable).getContent();
 
         return branches.stream().map(branch -> new BranchResponseDto(branch.getId(), branch.getRestaurant().getName(),null, branch.getLocation(), branch.getContactNumber(), branch.getCreatedAt(), branch.getUpdatedAt(), branch.getCuisine(), branch.getBranchType(), null, null)).toList();
     }
 
     public Branches getById(Long branchId) {
         return branchRepo.findById(branchId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "branch not found"));
+    }
+
+    public List<Branches> getAll() {
+        return branchRepo.findAll();
     }
 
     public BranchResponseDto getBranchById( Long branchId) {
@@ -80,11 +90,11 @@ public class BranchService {
         branchRepo.save(branches);
         log.info("updated branch with id: {}", branchId);
         return "branch updated successfully";
-
-
     }
 
     public void save(Branches branches) {
         branchRepo.save(branches);
     }
+
+
 }

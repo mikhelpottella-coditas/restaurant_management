@@ -17,8 +17,8 @@ public class Invite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user;
+
+    private String invitationTo;
 
     private UUID inviteToken;
 

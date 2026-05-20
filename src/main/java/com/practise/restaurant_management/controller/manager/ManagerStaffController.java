@@ -27,10 +27,14 @@ public class ManagerStaffController {
         return ResponseEntity.created(null).body(response);
     }
 
-    @GetMapping
-    public ResponseEntity<List<StaffResponseDto>> getAllStaffs(){
+    @GetMapping("/{managerId}")
+    public ResponseEntity<List<StaffResponseDto>> getAllStaffs(@PathVariable Long managerId,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "5") int size,
+                                                               @RequestParam(defaultValue = "id") String sortBy,
+                                                               @RequestParam(defaultValue = "true") boolean ascending){
         log.info("getting all staffs");
-        List<StaffResponseDto> staffResponseDtoList = staffService.getAllStaff();
+        List<StaffResponseDto> staffResponseDtoList = staffService.getAllStaff(managerId,page,size,sortBy,ascending);
         return ResponseEntity.ok(staffResponseDtoList);
     }
 

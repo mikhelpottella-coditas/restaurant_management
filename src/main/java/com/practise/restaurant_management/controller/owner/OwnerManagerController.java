@@ -1,7 +1,10 @@
 package com.practise.restaurant_management.controller.owner;
 
+import com.practise.restaurant_management.dto.request.SendOwnerInviteRequestDto;
 import com.practise.restaurant_management.dto.response.ManagerProfileDto;
+import com.practise.restaurant_management.service.InviteService;
 import com.practise.restaurant_management.service.ManagerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +19,22 @@ import java.util.List;
 public class OwnerManagerController {
 
     private final ManagerService managerService;
+    private final InviteService inviteService;
+
+    @PostMapping("/send")
+    public ResponseEntity<String> inviteRestaurantOwner(@RequestBody @Valid SendOwnerInviteRequestDto request) {
+        return ResponseEntity.ok(inviteService.inviteManager(request));
+    }
+
 
     @GetMapping
-    public ResponseEntity<List<ManagerProfileDto>> getAllManagers() {
+    public ResponseEntity<List<ManagerProfileDto>> getAllManagers(
+                                                                  @RequestParam(defaultValue = "0") Integer page,
+                                                                  @RequestParam(defaultValue = "5") Integer size,
+                                                                  @RequestParam(defaultValue = "id") String sortBy,
+                                                                  @RequestParam(defaultValue = "true") Boolean ascending) {
         log.info("get all managers");
-        List<ManagerProfileDto> managerProfiles = managerService.getAllManagers();
+        List<ManagerProfileDto> managerProfiles = managerService.getAllManagers(page,size,sortBy,ascending);
         return ResponseEntity.ok(managerProfiles);
     }
 

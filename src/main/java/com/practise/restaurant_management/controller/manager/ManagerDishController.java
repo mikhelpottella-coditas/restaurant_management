@@ -2,7 +2,6 @@ package com.practise.restaurant_management.controller.manager;
 
 import com.practise.restaurant_management.dto.request.CreateDishDto;
 import com.practise.restaurant_management.dto.response.DishResponseDto;
-import com.practise.restaurant_management.entity.Dishes;
 import com.practise.restaurant_management.service.DishService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +26,13 @@ public class ManagerDishController {
     }
 
     @GetMapping("/branch/{menuId}")
-    public ResponseEntity<List<DishResponseDto>> getAllDishes(@PathVariable Long menuId) {
+    public ResponseEntity<List<DishResponseDto>> getAllDishes(@PathVariable Long menuId,
+                                                              @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "5") int size,
+                                                              @RequestParam(defaultValue = "id") String sortBy,
+                                                              @RequestParam(defaultValue = "true") boolean ascending) {
         log.info("getAllDishes");
-        List<DishResponseDto> responseDtoList = dishService.getAllDishes(menuId);
+        List<DishResponseDto> responseDtoList = dishService.getAllDishes(menuId, page, size, sortBy, ascending);
         return ResponseEntity.ok(responseDtoList);
     }
 

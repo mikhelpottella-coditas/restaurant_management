@@ -9,6 +9,9 @@ import com.practise.restaurant_management.repo.BranchRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +51,12 @@ public class ManagerService {
 
 
 
-    public List<ManagerProfileDto> getAllManagers() {
-        List<User> managers = userService.getAllUsersRoleManager(Role.MANAGER);
+    public List<ManagerProfileDto> getAllManagers(Integer page, Integer size, String sortBy, Boolean ascending) {
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+
+        List<User> managers = userService.getAllUsersRoleManager(Role.MANAGER,pageable);
         log.info("Retrieved {} managers from the database", managers.size());
         return managers.stream().map(manager -> new ManagerProfileDto(manager.getId(), manager.getFirstName(), manager.getLastName(), manager.getEmail(),
                 manager.getPhoneNumber(), manager.getRole(), manager.getImage(),
@@ -66,4 +73,6 @@ public class ManagerService {
         log.info("Branch with ID {} has been assigned to Manager with ID {}", branchId, managerId);
         return "branch assigned to manager successfully";
     }
+
+
 }

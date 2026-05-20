@@ -10,7 +10,11 @@ import com.practise.restaurant_management.repo.StaffRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +28,7 @@ public class StaffService {
     private static final Logger log = LogManager.getLogger(StaffService.class);
     private final StaffRepo staffRepo;
     private final ManagerService managerService;
+    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final BranchService branchService;
 
@@ -35,7 +40,7 @@ public class StaffService {
         User user = User.builder()
                 .firstName(staffRegisterDto.firstName())
                 .lastName(staffRegisterDto.lastName())
-                .password(staffRegisterDto.password())
+                .password(passwordEncoder.encode(staffRegisterDto.password()))
                 .email(staffRegisterDto.email())
                 .phoneNumber(staffRegisterDto.phoneNumber())
                 .role(staffRegisterDto.role())
@@ -64,13 +69,16 @@ public class StaffService {
         return "Staff created successfully";
     }
 
-    public List<Staff> getAll(){
-        return staffRepo.findAll();
+    public List<Staff> getAll(Long managerId, Pageable pageable){
+        return staffRepo.findAllByManagerUserId(managerId,pageable).getContent();
     }
 
-    public List<StaffResponseDto> getAllStaff() {
+    public List<StaffResponseDto> getAllStaff(Long managerId, int page, int size, String sortBy, boolean ascending) {
 
-        List<Staff> staffList = getAll();
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        List<Staff> staffList = getAll(managerId,pageable);
 
         log.info("getting all staff");
 

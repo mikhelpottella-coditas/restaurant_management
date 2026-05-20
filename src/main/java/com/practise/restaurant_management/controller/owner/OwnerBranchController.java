@@ -28,9 +28,13 @@ public class OwnerBranchController {
 
 
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<List<BranchResponseDto>> getAllBranches(@PathVariable Long restaurantId) {
+    public ResponseEntity<List<BranchResponseDto>> getAllBranches(@PathVariable Long restaurantId,
+                                                                  @RequestParam(defaultValue = "0") Integer page,
+                                                                  @RequestParam(defaultValue = "5") Integer size,
+                                                                  @RequestParam(defaultValue = "id") String sortBy,
+                                                                  @RequestParam(defaultValue = "true") Boolean ascending) {
         log.info("Fetching all branches for restaurant ID: {}", restaurantId);
-        List<BranchResponseDto> branches = branchService.getAllBranches(restaurantId);
+        List<BranchResponseDto> branches = branchService.getAllBranches(restaurantId,page,size,sortBy,ascending);
         return ResponseEntity.ok(branches);
     }
 

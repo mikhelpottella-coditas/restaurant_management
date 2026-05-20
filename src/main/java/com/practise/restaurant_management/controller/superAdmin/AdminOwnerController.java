@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/invitations/restaurant-owner/send")
+@RequestMapping("admin/invitations/restaurant-owner")
 public class AdminOwnerController {
 
     private final InviteService inviteService;
 
-    @PostMapping
+
+    @PostMapping("/send")
     public ResponseEntity<String> inviteRestaurantOwner(@RequestBody @Valid SendOwnerInviteRequestDto request) {
-        return ResponseEntity.ok(inviteService.inviteUser(request));
+        return ResponseEntity.ok(inviteService.inviteOwner(request));
     }
 
 }

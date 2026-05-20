@@ -9,6 +9,9 @@ import com.practise.restaurant_management.exception.CustomException;
 import com.practise.restaurant_management.repo.DishRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -56,8 +59,12 @@ public class DishService {
         return dishRepo.findAll();
     }
 
-    public List<DishResponseDto> getAllDishes(Long menuId) {
-        List<Dishes> dishesList = dishRepo.findAllByMenuId(menuId);
+    public List<DishResponseDto> getAllDishes(Long menuId, Integer page, Integer size, String sortBy, Boolean ascending) {
+
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        List<Dishes> dishesList = dishRepo.findAllByMenuId(menuId,pageable).getContent();
 
         List<DishResponseDto> responseDtoList = new ArrayList<>();
         dishesList.forEach(dish ->

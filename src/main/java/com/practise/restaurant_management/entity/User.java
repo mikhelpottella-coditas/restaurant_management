@@ -3,6 +3,7 @@ package com.practise.restaurant_management.entity;
 import com.practise.restaurant_management.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

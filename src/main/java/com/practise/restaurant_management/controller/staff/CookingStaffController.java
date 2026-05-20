@@ -26,16 +26,24 @@ public class CookingStaffController {
     private final OrderItemService orderItemService;
 
     @GetMapping("/{branchId}")
-    public ResponseEntity<List<OrderItemResponseDto>> getAllOrderItems(@PathVariable Long branchId) {
+    public ResponseEntity<List<OrderItemResponseDto>> getAllOrderItems(@PathVariable Long branchId,
+                                                                       @RequestParam(defaultValue = "0") Integer page,
+                                                                       @RequestParam(defaultValue = "5") Integer size,
+                                                                       @RequestParam(defaultValue = "id") String sortBy,
+                                                                       @RequestParam(defaultValue = "true") Boolean ascending) {
         log.info("getAllOrderItems");
-        List<OrderItemResponseDto> orderItemResponseDtos = orderService.getAllOrderItems(branchId);
+        List<OrderItemResponseDto> orderItemResponseDtos = orderService.getAllOrderItems(branchId,page,size,sortBy,ascending);
         return ResponseEntity.ok(orderItemResponseDtos);
     }
 
     @GetMapping("/{menuId}/all_dishes")
-    public ResponseEntity<List<DishResponseDto>>  getAllDishes(@PathVariable Long menuId) {
+    public ResponseEntity<List<DishResponseDto>>  getAllDishes(@PathVariable Long menuId,
+                                                               @RequestParam(defaultValue = "0") Integer page,
+                                                               @RequestParam(defaultValue = "5") Integer size,
+                                                               @RequestParam(defaultValue = "id") String sortBy,
+                                                               @RequestParam(defaultValue = "true") Boolean ascending) {
         log.info("getAllDishes");
-        List<DishResponseDto>  dishResponseDtos = dishService.getAllDishes(menuId);
+        List<DishResponseDto>  dishResponseDtos = dishService.getAllDishes(menuId,page,size,sortBy,ascending);
         return ResponseEntity.ok(dishResponseDtos);
     }
 

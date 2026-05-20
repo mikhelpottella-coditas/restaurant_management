@@ -1,6 +1,7 @@
 package com.practise.restaurant_management.service;
 
 import com.practise.restaurant_management.dto.request.LoginDto;
+import com.practise.restaurant_management.dto.request.RegisterRequestDto;
 import com.practise.restaurant_management.entity.RefreshToken;
 import com.practise.restaurant_management.entity.User;
 import com.practise.restaurant_management.enums.Role;
@@ -12,6 +13,7 @@ import com.practise.restaurant_management.security.RefreshTokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
     private  final PasswordEncoder passwordEncoder;
+    private final InviteService inviteService;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepo refreshTokenRepo;
     private final RefreshTokenService refreshTokenService;
@@ -70,8 +75,8 @@ public class UserService implements UserDetailsService {
         return "user updated successfully";
     }
 
-    public List<User> getAllUsersRoleManager(Role role) {
-        return userRepo.findByRole(role);
+    public List<User> getAllUsersRoleManager(Role role, Pageable pageable) {
+        return userRepo.findByRole(role,pageable).getContent();
     }
 
     public void save(User manager) {
@@ -92,5 +97,54 @@ public class UserService implements UserDetailsService {
         }
         String newAccess = jwtUtil.generateToken(token.getUser().getUsername(),token.getUser().getEmail());
         return "access token: "+newAccess;
+    }
+
+    public String registerOwner(UUID token, RegisterRequestDto requestDto) {
+
+        Boolean isValid = inviteService.validate(requestDto.email(),token);
+
+        if(!isValid) throw new CustomException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+
+        User user = User.builder()
+                .email(requestDto.email())
+                .image(requestDto.image())
+                .role(Role.OWNER)
+                .firstName(requestDto.firstName())
+                .lastName(requestDto.lastName())
+                .phoneNumber(requestDto.phoneNumber())
+                .password(passwordEncoder.encode(requestDto.password()))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        userRepo.save(user);
+
+        log.info("registration successfully");
+        return "registration successfully completed";
+
+    }
+
+    public String registerManager(UUID token, RegisterRequestDto requestDto) {
+        Boolean isValid = inviteService.validate(requestDto.email(),token);
+
+        if(!isValid) throw new CustomException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+
+        User user = User.builder()
+                .email(requestDto.email())
+                .image(requestDto.image())
+                .role(Role.MANAGER)
+                .firstName(requestDto.firstName())
+                .lastName(requestDto.lastName())
+                .phoneNumber(requestDto.phoneNumber())
+                .password(passwordEncoder.encode(requestDto.password()))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        userRepo.save(user);
+
+        log.info("registration successfully");
+        return "registration successfully completed";
+
     }
 }

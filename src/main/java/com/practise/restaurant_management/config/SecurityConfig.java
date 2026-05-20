@@ -2,6 +2,7 @@ package com.practise.restaurant_management.config;
 
 
 
+import com.practise.restaurant_management.enums.Role;
 import com.practise.restaurant_management.security.JwtFilter;
 import com.practise.restaurant_management.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,14 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
 
+    protected static final String[] PUBLIC_URLS = {
+            "/api/v1/auth/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/webjars/**"
+    };
 
     @Bean
     public AuthenticationManager authenticationManager(UserService userService, PasswordEncoder passwordEncoder){
@@ -42,6 +51,13 @@ public class SecurityConfig {
         http.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->
                         auth.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers(PUBLIC_URLS).permitAll()
+                                .requestMatchers("/admin/**").hasAnyRole(Role.SUPER_ADMIN.toString())
+                                .requestMatchers("/owner/**").hasAnyRole(Role.OWNER.toString())
+                                .requestMatchers("/manager/**").hasAnyRole(Role.MANAGER.toString(),Role.OWNER.toString())
+                                .requestMatchers("/kitchen/**").hasAnyRole(Role.HEAD_CHEF.toString(),Role.MANAGER.toString(),Role.OWNER.toString())
+                                .requestMatchers("/staff/**").hasAnyRole(Role.WAITER.toString(),Role.MANAGER.toString(),Role.OWNER.toString())
+                                .requestMatchers("/store/**").hasAnyRole(Role.STORE_KEEPER.toString(),Role.MANAGER.toString(),Role.OWNER.toString())
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

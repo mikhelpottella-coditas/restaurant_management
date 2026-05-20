@@ -19,17 +19,21 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,7 @@ public class OrderService {
     private final StaffService staffService;
     private final BranchService branchService;
     private final DishService dishService;
+
 
     public List<OrderResponseDto> getAllOrder(Long staffId) {
         log.info("getAllOrders for the id {}", staffId);
@@ -137,7 +142,10 @@ public class OrderService {
     }
 
 
-    public List<OrderItemResponseDto> getAllOrderItems(Long branchId) {
+    public List<OrderItemResponseDto> getAllOrderItems(Long branchId, Integer page, Integer size, String sortBy, Boolean ascending) {
+
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Branches branch = branchService.getById(branchId);
 
@@ -157,7 +165,7 @@ public class OrderService {
 
 
         PDDocument document = new PDDocument();
-        PDPage page = new PDPage();
+        PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
 
         PDPageContentStream contentStream = null;
@@ -166,24 +174,35 @@ public class OrderService {
             contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER), 12);
             contentStream.setStrokingColor(Color.RED);
             contentStream.beginText();
-            contentStream.newLineAtOffset(25, 500);
-            contentStream.showText("Date               :            "+order.getOrderedAt().toString());
-            contentStream.showText("Restaurant Name    : "+order.getStaff().getBranches().getRestaurant().getName().toString());
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER), 12);
 
-            contentStream.showText("Customer name      :   "+ order.getCustomerName());
-            contentStream.showText("Customer number    : "+ order.getCustomerNumber());
-            contentStream.showText("Table number       : "+order.getRestaurantTable().getTableNumber().toString());
+            contentStream.setLeading(14.5f);
+
+            contentStream.newLineAtOffset(50, 750);
+            contentStream.showText("Date               :            "+order.getOrderedAt().toString());
+            contentStream.newLine();
+            contentStream.showText("Restaurant Name    :            "+ order.getStaff().getBranches().getRestaurant().getName());
+            contentStream.newLine();
+            contentStream.showText("Customer name      :            "+ order.getCustomerName());
+            contentStream.newLine();
+            contentStream.showText("Customer number      :            "+ order.getCustomerNumber());
+            contentStream.newLine();
+            contentStream.showText("Table number       :            "+order.getRestaurantTable().getTableNumber().toString());
 
             for (OrderItem orderItem : order.getOrderItems()){
-                contentStream.showText(orderItem.getDishes().getName()+"                  "+orderItem.getQuantity()+"       "+orderItem.getTotalPrice());
+                contentStream.newLine();
+                contentStream.showText(orderItem.getDishes().getName()+"       :            "+orderItem.getQuantity()+"       "+orderItem.getTotalPrice());
             }
-            contentStream.showText("\n \n Tax amount         : "+order.getTaxableAmount().toString());
-            contentStream.showText("Discount amount          : "+order.getDiscountAmount().toString());
-            contentStream.showText("\n \n final price        : "+order.getFinalPrice().toString());
+            contentStream.newLine();
+            contentStream.showText("Tax amount         :            "+order.getTaxableAmount().toString());
+            contentStream.newLine();
+            contentStream.showText("Discount amount    :            "+order.getDiscountAmount().toString());
+            contentStream.newLine();
+            contentStream.showText("final price        :            "+order.getFinalPrice().toString());
             contentStream.endText();
             contentStream.close();
 
-            document.save("C:/Users/Coditas-Admin/Downloads/pdfBoxHelloWorld"+ LocalDate.now().toString()+".pdf");
+            document.save("C:/Users/Coditas-Admin/Downloads/OrderBill"+ UUID.randomUUID() +".pdf");
             document.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
